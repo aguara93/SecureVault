@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SecureVault.API\SecureVault.API.csproj" />
+    <ProjectReference Include="..\SecureVault.Shared\SecureVault.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
