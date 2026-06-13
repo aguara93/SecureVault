@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.Enums
 {
-    internal class SensorType
+    public enum SensorType
     {
             Motion,
             Door,

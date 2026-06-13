@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.Enums
 {
-    internal class AlarmStatus
+     public enum AlarmStatus
     {
             Active,
             Inactive,

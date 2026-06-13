@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.Enums
 {
-    internal class SensorStatus
+    public enum SensorStatus
     {
         Online,
         Offline,
