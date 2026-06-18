@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.DTOs
 {
-    internal class UserDto
+    public class UserDto
     {
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;

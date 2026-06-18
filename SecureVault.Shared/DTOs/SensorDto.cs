@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.DTOs
 {
-    internal class SensorDto
+    public class SensorDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

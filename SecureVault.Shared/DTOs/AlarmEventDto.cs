@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.DTOs
 {
-    internal class AlarmEventDto
+    public class AlarmEventDto
     {
         public int Id { get; set; }
         public int SensorId { get; set; }

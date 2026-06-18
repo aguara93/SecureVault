@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SecureVault.Shared.DTOs
 {
-    internal class SensorReadingDto
+    public class SensorReadingDto
     {
         public int Id { get; set; }
         public int SensorId { get; set; }
