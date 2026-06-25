@@ -3,11 +3,13 @@ using SecureVault.API.Data;
 using SecureVault.Shared.DTOs;
 using SecureVault.API.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SecureVault.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class SensorsController : ControllerBase
     {
         private readonly SecureVaultDbContext _context;

@@ -3,11 +3,13 @@ using Microsoft.EntityFrameworkCore;
 using SecureVault.API.Data;
 using SecureVault.Shared.DTOs;
 using SecureVault.Shared.Enums;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SecureVault.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class AlarmEventsController : ControllerBase
     {
         private readonly SecureVaultDbContext _context;
