@@ -13,7 +13,7 @@ namespace SecureVault.Shared.Enums
             Temperature,
             Humidity,
             Smoke,
-            Co2,
+            CarbonMonoxide,
             Fire,
             WaterLeak,
             Camera
