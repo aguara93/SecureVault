@@ -3,6 +3,7 @@ using SecureVault.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using SecureVault.API.Services;
 
 namespace SecureVault.API
 {
@@ -14,6 +15,8 @@ namespace SecureVault.API
 
             // Add services to the container.
             builder.Services.AddControllers();
+            // register the AlarmEvaluationService
+            builder.Services.AddScoped<AlarmEvaluationService>();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
