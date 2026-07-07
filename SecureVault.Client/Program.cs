@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using SecureVault.Client;
+using SecureVault.Client.Services;
 
 namespace SecureVault.Client
 {
@@ -18,6 +19,10 @@ namespace SecureVault.Client
             { 
                 BaseAddress = new Uri(apiBaseUrl) 
             });
+
+            // Register services
+            builder.Services.AddScoped<SensorService>();
+            builder.Services.AddScoped<AlarmService>();
 
             await builder.Build().RunAsync();
         }
