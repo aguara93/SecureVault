@@ -1,0 +1,89 @@
+﻿@page "/dashboard"
+@using SecureVault.Shared.DTOs
+@using SecureVault.Client.Services
+@inject SensorService SensorService
+@inject AlarmService AlarmService
+
+<h1>SecureVault Dashboard</h1>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h2>Sensors</h2>
+    @if (sensors == null || !sensors.Any())
+    {
+        <p>No sensors found.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Last Seen</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sensor in sensors)
+                {
+                    <tr>
+                        <td>@sensor.Name</td>
+                        <td>@sensor.Location</td>
+                        <td>@sensor.Type</td>
+                        <td>@sensor.Status</td>
+                        <td>@sensor.LastSeen</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <h2>Active Alarms</h2>
+    @if (activeAlarms == null || !activeAlarms.Any())
+    {
+        <p>No active alarms.</p>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Sensor</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Triggered At</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var alarm in activeAlarms)
+                {
+                    <tr>
+                        <td>@alarm.SensorName</td>
+                        <td>@alarm.SensorLocation</td>
+                        <td>@alarm.Description</td>
+                        <td>@alarm.TriggeredAt</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private List<SensorDto>? sensors;
+    private List<AlarmEventDto>? activeAlarms;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sensors = await SensorService.GetSensorsAsync();
+        activeAlarms = await AlarmService.GetActiveAlarmsAsync();
+        isLoading = false;
+    }
+}

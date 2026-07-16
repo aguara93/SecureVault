@@ -73,7 +73,18 @@ namespace SecureVault.API
                 };
             });
             builder.Services.AddAuthorization();
-           
+
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowBlazorClient", policy =>
+                {
+                    policy.WithOrigins("https://localhost:7173")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -85,6 +96,8 @@ namespace SecureVault.API
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowBlazorClient");
 
             app.UseAuthentication();
 

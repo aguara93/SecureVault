@@ -23,6 +23,7 @@ namespace SecureVault.Client
             // Register services
             builder.Services.AddScoped<SensorService>();
             builder.Services.AddScoped<AlarmService>();
+            builder.Services.AddScoped<AuthService>();
 
             await builder.Build().RunAsync();
         }
