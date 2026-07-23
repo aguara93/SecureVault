@@ -20,7 +20,7 @@ namespace SecureVault.Client.Services
         public async Task<bool> LoginAsync(LoginDto dto)
         {
             var response = await _http.PostAsJsonAsync("api/auth/login", dto);
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
                 return false;
 
             var result = await response.Content.ReadFromJsonAsync<JsonElement>();
