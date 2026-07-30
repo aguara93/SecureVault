@@ -1,6 +1,5 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using Microsoft.JSInterop;
 using SecureVault.Shared.DTOs;
 
 namespace SecureVault.Client.Services
@@ -8,13 +7,13 @@ namespace SecureVault.Client.Services
     public class AuthService
     {
         private readonly HttpClient _http;
-        private readonly IJSRuntime _js;
         private string? _token;
 
-        public AuthService(HttpClient http, IJSRuntime js)
+        public event Action? OnAuthStateChanged;
+
+        public AuthService(HttpClient http)
         {
             _http = http;
-            _js = js;
         }
 
         public async Task<bool> LoginAsync(LoginDto dto)
@@ -33,12 +32,13 @@ namespace SecureVault.Client.Services
             return true;
         }
 
-        public bool IsLoggedIn() => _token != null;
+        public bool IsLoggedIn => _token != null;
 
         public void Logout()
         {
             _token = null;
             _http.DefaultRequestHeaders.Authorization = null;
+            OnAuthStateChanged?.Invoke();
         }
     }
 }
