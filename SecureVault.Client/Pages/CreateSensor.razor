@@ -1,0 +1,52 @@
+﻿@page "/sensors/create"
+@using SecureVault.Shared.DTOs
+@using SecureVault.Shared.Enums
+@using SecureVault.Client.Services
+@inject SensorService SensorService
+@inject NavigationManager Navigation
+
+<h1>Add New Sensor</h1>
+
+<EditForm Model="newSensor" OnValidSubmit="HandleCreate">
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="newSensor.Name" />
+    </div>
+    <div>
+        <label>Location:</label>
+        <InputText @bind-Value="newSensor.Location" />
+    </div>
+    <div>
+        <label>Type:</label>
+        <InputSelect @bind-Value="newSensor.Type">
+            @foreach (var type in Enum.GetValues<SensorType>())
+            {
+                <option value="@type">@type</option>
+            }
+        </InputSelect>
+    </div>
+    <button type="submit">Create Sensor</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@code {
+    private SensorDto newSensor = new();
+    private string? errorMessage;
+
+    private async Task HandleCreate()
+    {
+        var success = await SensorService.CreateSensorAsync(newSensor);
+        if (success)
+        {
+            Navigation.NavigateTo("/dashboard");
+        }
+        else
+        {
+            errorMessage = "Failed to create sensor.";
+        }
+    }
+}
