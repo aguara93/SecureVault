@@ -23,5 +23,11 @@ namespace SecureVault.Client.Services
             var response = await _http.PostAsJsonAsync("api/sensors", sensor);
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<List<SensorReadingDto>> GetSensorReadingsAsync(int sensorId)
+        {
+            return await _http.GetFromJsonAsync<List<SensorReadingDto>>($"api/sensorreadings/sensor/{sensorId}") 
+                ?? new List<SensorReadingDto>();
+        }
     }
 }

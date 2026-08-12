@@ -1,0 +1,61 @@
+﻿@page "/sensors/{SensorId:int}"
+@using SecureVault.Shared.DTOs
+@using SecureVault.Client.Services
+@inject SensorService SensorService
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<h1>Sensor Readings History</h1>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (readings == null || !readings.Any())
+{
+    <p>No readings found for this sensor.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Value</th>
+                <th>Unit</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reading in readings)
+            {
+                <tr>
+                    <td>@reading.Value</td>
+                    <td>@reading.Unit</td>
+                    <td>@reading.Timestamp</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<a href="/dashboard">Back to Dashboard</a>
+
+@code {
+    [Parameter]
+    public int SensorId { get; set; }
+
+    private List<SensorReadingDto>? readings;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsLoggedIn)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
+        readings = await SensorService.GetSensorReadingsAsync(SensorId);
+        isLoading = false;
+    }
+}

@@ -38,7 +38,7 @@ else
                 @foreach (var sensor in sensors)
                 {
                     <tr>
-                        <td>@sensor.Name</td>
+                        <td><a href="/sensors/@sensor.Id">@sensor.Name</a></td>
                         <td>@sensor.Location</td>
                         <td>@sensor.Type</td>
                         <td>@sensor.Status</td>
