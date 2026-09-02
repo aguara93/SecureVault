@@ -6,6 +6,8 @@ using SecureVault.Shared.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using SecureVault.API.Services;
 using SecureVault.Shared.Enums;
+using Microsoft.AspNetCore.SignalR;
+using SecureVault.API.Hubs;
 
 namespace SecureVault.API.Controllers
 {
@@ -16,11 +18,16 @@ namespace SecureVault.API.Controllers
     {
         private readonly SecureVaultDbContext _context;
         private readonly AlarmEvaluationService _alarmService;
+        private readonly IHubContext<SensorHub> _hubContext;
 
-        public SensorReadingsController(SecureVaultDbContext context, AlarmEvaluationService alarmService)
+        public SensorReadingsController(
+            SecureVaultDbContext context,
+            AlarmEvaluationService alarmService,
+            IHubContext<SensorHub> hubContext)
         {
             _context = context;
             _alarmService = alarmService;
+            _hubContext = hubContext;
         }
 
         // GET: api/sensorreadings/sensor/5
@@ -82,6 +89,10 @@ namespace SecureVault.API.Controllers
             await _context.SaveChangesAsync();
 
             dto.Id = reading.Id;
+
+            // Notify all connected clients about the new reading
+            await _hubContext.Clients.All.SendAsync("ReceiveSensorReading", dto);
+
             return CreatedAtAction(nameof(GetReadingsBySensor),
                 new { sensorId = reading.SensorId }, dto);
         }

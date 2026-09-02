@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SecureVault.API.Services;
+using SecureVault.API.Hubs;
 
 namespace SecureVault.API
 {
@@ -15,6 +16,8 @@ namespace SecureVault.API
 
             // Add services to the container.
             builder.Services.AddControllers();
+            // Add SignalR
+            builder.Services.AddSignalR();
             // register the AlarmEvaluationService
             builder.Services.AddScoped<AlarmEvaluationService>();
             builder.Services.AddEndpointsApiExplorer();
@@ -102,6 +105,8 @@ namespace SecureVault.API
             app.UseAuthentication();
 
             app.UseAuthorization();
+            
+            app.MapHub<SensorHub>("/hubs/sensor");
 
             app.MapControllers();
 
