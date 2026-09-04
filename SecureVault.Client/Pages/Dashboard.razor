@@ -1,10 +1,12 @@
 ﻿@page "/dashboard"
+@implements IAsyncDisposable
 @using SecureVault.Shared.DTOs
 @using SecureVault.Client.Services
 @inject SensorService SensorService
 @inject AlarmService AlarmService
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject SensorHubService HubService
 
 <h1>SecureVault Dashboard</h1>
 
@@ -97,5 +99,22 @@ else
         sensors = await SensorService.GetSensorsAsync();
         activeAlarms = await AlarmService.GetActiveAlarmsAsync();
         isLoading = false;
+
+        // Start SignalR connection
+        HubService.OnReadingReceived += HandleNewReading;
+        await HubService.StartAsync("https://localhost:7061");
+    }
+
+    private async void HandleNewReading(SensorReadingDto reading)
+    {
+        // Refresh alarms in case a new one was triggered
+        activeAlarms = await AlarmService.GetActiveAlarmsAsync();
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        HubService.OnReadingReceived -= HandleNewReading;
+        await HubService.DisposeAsync();
     }
 }
