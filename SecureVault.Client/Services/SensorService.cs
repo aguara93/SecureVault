@@ -29,5 +29,11 @@ namespace SecureVault.Client.Services
             return await _http.GetFromJsonAsync<List<SensorReadingDto>>($"api/sensorreadings/sensor/{sensorId}") 
                 ?? new List<SensorReadingDto>();
         }
+
+        public async Task<bool> DeleteSensorAsync(int id)
+        {
+            var response = await _http.DeleteAsync($"api/sensors/{id}");
+            return response.IsSuccessStatusCode;
+        }
     }
 }

@@ -7,6 +7,7 @@
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 @inject SensorHubService HubService
+@inject IJSRuntime JsRuntime
 
 <h1>SecureVault Dashboard</h1>
 
@@ -34,6 +35,7 @@ else
                     <th>Type</th>
                     <th>Status</th>
                     <th>Last Seen</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,12 +47,14 @@ else
                         <td>@sensor.Type</td>
                         <td>@sensor.Status</td>
                         <td>@sensor.LastSeen</td>
+                        <td>
+                            <button @onclick="() => DeleteSensor(sensor.Id)">Delete</button>
+                        </td>
                     </tr>
                 }
             </tbody>
         </table>
     }
-
     <h2>Active Alarms</h2>
     @if (activeAlarms == null || !activeAlarms.Any())
     {
@@ -81,12 +85,10 @@ else
         </table>
     }
 }
-
 @code {
     private List<SensorDto>? sensors;
     private List<AlarmEventDto>? activeAlarms;
     private bool isLoading = true;
-
     protected override async Task OnInitializedAsync()
     {
         // Redirect to login if not authenticated
@@ -95,23 +97,32 @@ else
             Navigation.NavigateTo("/login");
             return;
         }
-
         sensors = await SensorService.GetSensorsAsync();
         activeAlarms = await AlarmService.GetActiveAlarmsAsync();
         isLoading = false;
-
         // Start SignalR connection
         HubService.OnReadingReceived += HandleNewReading;
         await HubService.StartAsync("https://localhost:7061");
     }
-
     private async void HandleNewReading(SensorReadingDto reading)
     {
         // Refresh alarms in case a new one was triggered
         activeAlarms = await AlarmService.GetActiveAlarmsAsync();
         StateHasChanged();
     }
+    private async Task DeleteSensor(int id)
+    {
+        // Ask for confirmation before deleting
+        var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this sensor?");
+        if (!confirmed) return;
 
+        var success = await SensorService.DeleteSensorAsync(id);
+        if (success)
+        {
+            sensors = await SensorService.GetSensorsAsync();
+            StateHasChanged();
+        }
+    }
     public async ValueTask DisposeAsync()
     {
         HubService.OnReadingReceived -= HandleNewReading;
