@@ -1,9 +1,11 @@
 ﻿@page "/sensors/{SensorId:int}"
+@implements IAsyncDisposable
 @using SecureVault.Shared.DTOs
 @using SecureVault.Client.Services
 @inject SensorService SensorService
 @inject AuthService AuthService
 @inject NavigationManager Navigation
+@inject IJSRuntime JsRuntime
 
 <h1>Sensor Readings History</h1>
 
@@ -17,6 +19,8 @@ else if (readings == null || !readings.Any())
 }
 else
 {
+    <canvas id="sensorChart" width="600" height="300"></canvas>
+
     <table>
         <thead>
             <tr>
@@ -57,5 +61,23 @@ else
 
         readings = await SensorService.GetSensorReadingsAsync(SensorId);
         isLoading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (readings != null && readings.Any())
+        {
+            // Order readings chronologically for the chart
+            var orderedReadings = readings.OrderBy(r => r.Timestamp).ToList();
+            var labels = orderedReadings.Select(r => r.Timestamp.ToString("HH:mm:ss")).ToArray();
+            var values = orderedReadings.Select(r => r.Value).ToArray();
+
+            await JsRuntime.InvokeVoidAsync("renderChart", "sensorChart", labels, values);
+        }
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }
