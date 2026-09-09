@@ -16,11 +16,18 @@ namespace SecureVault.API
 
             // Add services to the container.
             builder.Services.AddControllers();
+            
             // Add SignalR
             builder.Services.AddSignalR();
-            // register the AlarmEvaluationService
+           
+            // Register the AlarmEvaluationService
             builder.Services.AddScoped<AlarmEvaluationService>();
+
+            // Register the ApiKeyService
+            builder.Services.AddScoped<ApiKeyService>();
+
             builder.Services.AddEndpointsApiExplorer();
+
             builder.Services.AddSwaggerGen(options =>
             {
                 options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
