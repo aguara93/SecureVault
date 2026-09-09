@@ -4,6 +4,7 @@ using SecureVault.Shared.DTOs;
 using SecureVault.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using SecureVault.API.Services;
 
 namespace SecureVault.API.Controllers
 {
@@ -13,10 +14,12 @@ namespace SecureVault.API.Controllers
     public class SensorsController : ControllerBase
     {
         private readonly SecureVaultDbContext _context;
+        private readonly ApiKeyService _apiKeyService;
 
-        public SensorsController(SecureVaultDbContext context)
+        public SensorsController(SecureVaultDbContext context, ApiKeyService apiKeyService)
         {
             _context = context;
+            _apiKeyService = apiKeyService;
         }
 
         // GET: api/sensors
@@ -58,12 +61,18 @@ namespace SecureVault.API.Controllers
         [HttpPost]
         public async Task<ActionResult<SensorDto>> CreateSensor(SensorDto sensorDto)
         {
+            // Generate a new API key for this sensor
+            var apiKey = _apiKeyService.GenerateApiKey();
+            var apiKeyHash = _apiKeyService.HashApiKey(apiKey);
+
             var sensor = new Sensor
             {
                 Name = sensorDto.Name,
                 Location = sensorDto.Location,
                 Type = sensorDto.Type,
                 Status = sensorDto.Status,
+                ApiKey = apiKey,   // shown once to the user
+                ApiKeyHash = apiKeyHash,   // stored securely
                 CreatedAt = DateTime.UtcNow,
                 LastSeen = DateTime.UtcNow
             };
@@ -72,7 +81,11 @@ namespace SecureVault.API.Controllers
             await _context.SaveChangesAsync();
 
             sensorDto.Id = sensor.Id;
-            return CreatedAtAction(nameof(GetSensor), new { id = sensor.Id }, sensorDto);
+            return CreatedAtAction(nameof(GetSensor), new { id = sensor.Id }, new 
+            {
+                sensor = sensorDto,
+                apiKey = apiKey // return the raw key once, so the user can copy it
+            });
         }
 
         // DELETE: api/sensors/5
