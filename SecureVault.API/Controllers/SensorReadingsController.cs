@@ -8,12 +8,12 @@ using SecureVault.API.Services;
 using SecureVault.Shared.Enums;
 using Microsoft.AspNetCore.SignalR;
 using SecureVault.API.Hubs;
+using SecureVault.API.Attributes;
 
 namespace SecureVault.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class SensorReadingsController : ControllerBase
     {
         private readonly SecureVaultDbContext _context;
@@ -32,6 +32,7 @@ namespace SecureVault.API.Controllers
 
         // GET: api/sensorreadings/sensor/5
         [HttpGet("sensor/{sensorId}")]
+        [Authorize]  // Users still need JWT to view readings
         public async Task<ActionResult<IEnumerable<SensorReadingDto>>> GetReadingsBySensor(int sensorId)
         {
             return await _context.SensorReadings
@@ -50,6 +51,7 @@ namespace SecureVault.API.Controllers
 
         // POST: api/sensorreadings
         [HttpPost]
+        [ApiKeyAuth]  // Sensors authenticate with their own API key instead of JWT
         public async Task<ActionResult<SensorReadingDto>> CreateReading(SensorReadingDto dto)
         {
             // Find the sensor
