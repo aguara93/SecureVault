@@ -22,7 +22,9 @@ namespace SecureVault.API.Attributes
             var apiKeyService = context.HttpContext.RequestServices.GetRequiredService<ApiKeyService>();
 
             var sensors = await dbContext.Sensors.ToListAsync();
-            var matchingSensor = sensors.FirstOrDefault(s => apiKeyService.VerifyApiKey(extractedApiKey!, s.ApiKeyHash));
+            var matchingSensor = sensors.FirstOrDefault(s =>
+                !string.IsNullOrEmpty(s.ApiKeyHash) &&
+                apiKeyService.VerifyApiKey(extractedApiKey!, s.ApiKeyHash));
 
             if (matchingSensor == null)
             {
