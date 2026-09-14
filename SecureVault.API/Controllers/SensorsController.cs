@@ -22,6 +22,12 @@ namespace SecureVault.API.Controllers
             _apiKeyService = apiKeyService;
         }
 
+        /// <summary>
+        /// Retrieves all sensors as data transfer objects.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. 
+        /// The task result contains a collection of SensorDto
+        /// objects.</returns>
         // GET: api/sensors
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SensorDto>>> GetSensors()
@@ -39,6 +45,13 @@ namespace SecureVault.API.Controllers
                 .ToListAsync();
         }
 
+        /// <summary>
+        ///  Retrives a single sensor identified by its unique ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the sensor to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the requested SensorSto
+        /// if found, or a 404 Not Found response otherwise.</returns>
         // GET: api/sensors/5
         [HttpGet("{id}")]
         public async Task<ActionResult<SensorDto>> GetSensor(int id)
@@ -57,6 +70,15 @@ namespace SecureVault.API.Controllers
             };
         }
 
+        /// <summary>
+        /// Creates a new sensor and generates a unique API key for it.
+        /// The raw API key is returned only in thi response and cannot
+        /// be retrieved again; only its hashed form is persisted.
+        /// </summary>
+        /// <param name="sensorDto">The data transfer object containing
+        /// the datails of the sensor to create.</param>
+        /// <returns>A task result contains the newly created sensor together
+        /// with its generated API key.</returns>
         // POST: api/sensors
         [HttpPost]
         public async Task<ActionResult<SensorDto>> CreateSensor(SensorDto sensorDto)
@@ -88,6 +110,13 @@ namespace SecureVault.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Deletes the sensor identified by its unique ID.
+        /// </summary>
+        /// <param name="id">The unique identifier of the sensor to delete.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains a 204 No Content response if the
+        /// delation succeeded, or a 404 Not Found response otherwise.</returns>
         // DELETE: api/sensors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSensor(int id)
