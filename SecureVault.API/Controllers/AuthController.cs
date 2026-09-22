@@ -23,6 +23,16 @@ namespace SecureVault.API.Controllers
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Registers a new user with the provided registration details.
+        /// The provided password is hashed with BCrypt before being 
+        /// persisted; the plain-text password is never stored.
+        /// </summary>
+        /// <param name="dto">The data transfer object containing the
+        /// username, email, and password of the account to create.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the newly created UserDto, or a
+        /// 400 Bad Request response if the email is already in use.</returns>
         // POST: api/auth/register
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto dto)
@@ -52,6 +62,17 @@ namespace SecureVault.API.Controllers
             });
         }
 
+        /// <summary>
+        /// Authenticates a user with an email and password.
+        /// On success, a signed JWT is generated and returned, which
+        /// must be included as a Bearer token is subsequent request
+        /// to protected endpoints.
+        /// </summary>
+        /// <param name="dto">The data transfer object containing the
+        /// email and password to authenticate with</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the generated JWT, or a 401
+        /// Unauthorized response if the credentials are invalid.</returns>
         // POST: api/auth/login
         [HttpPost("login")]
         public async Task<ActionResult<string>> Login(LoginDto dto)
@@ -66,6 +87,14 @@ namespace SecureVault.API.Controllers
             return Ok(new { token });
         }
 
+        /// <summary>
+        /// Generates a signed JWT for the specified user, containing
+        /// their ID, username, email and role as claims.
+        /// The token is valid for 15 min.
+        /// </summary>
+        /// <param name="user">The user for whom the token should
+        /// be generated.</param>
+        /// <returns>A signed JWT as a string.</returns>
         private string GenerateJwtToken(User user)
         {
             var key = new SymmetricSecurityKey(
