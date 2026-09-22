@@ -30,6 +30,16 @@ namespace SecureVault.API.Controllers
             _hubContext = hubContext;
         }
 
+        /// <summary>
+        /// Retrieves sensor readings for the specified sensor, 
+        /// ordered by timestamp in descending order 
+        /// (from the most recent to the oldest).
+        /// </summary>
+        /// <param name="sensorId">The unique identifier of the sensor
+        /// whose readings should be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains a collection of SensorReadingDto 
+        /// objects belonging to the specified sensor.</returns>
         // GET: api/sensorreadings/sensor/5
         [HttpGet("sensor/{sensorId}")]
         [Authorize]  // Users still need JWT to view readings
@@ -49,6 +59,16 @@ namespace SecureVault.API.Controllers
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Receives a new sensor reading, persists it, evaluates whether
+        /// it should trigger an alarm, and notifies all connected clients
+        /// in real time via SignalR.
+        /// </summary>
+        /// <param name="dto">The data transfer object containing
+        /// the sensor reading to record.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the newly created SensorReadingDto,
+        /// or a 404 Not Found response if the sensor doesn´t exist.</returns>
         // POST: api/sensorreadings
         [HttpPost]
         [ApiKeyAuth]  // Sensors authenticate with their own API key instead of JWT
