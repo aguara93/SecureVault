@@ -19,6 +19,14 @@ namespace SecureVault.API.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves all alarm events, including both active and
+        /// resolved alarms, together with a name and location of
+        /// the sensor that triggered each one of them.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains a collection of AlarmEventDto
+        /// objects.</returns>
         // GET: api/alarmevents
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AlarmEventDto>>> GetAlarmEvents()
@@ -39,6 +47,13 @@ namespace SecureVault.API.Controllers
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Retrieves only the alarm events that currently have the status 
+        /// Triggered - alarms that have not yet been resolved.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains a collection of AlarmEventDto
+        /// objects representing active alarms.</returns>
         // GET: api/alarmevents/active
         [HttpGet("active")]
         public async Task<ActionResult<IEnumerable<AlarmEventDto>>> GetActiveAlarms()
@@ -60,6 +75,18 @@ namespace SecureVault.API.Controllers
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Updates the status of an existing alarm event.
+        /// If the new status is Resolved, the resolution timestamp
+        /// is set automatically.
+        /// </summary>
+        /// <param name="id">The unique identifier of the alarm event
+        /// to update.</param>
+        /// <param name="status">The new status to assign to the 
+        /// alarm event.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains a 204 No Content response if the
+        /// update succeeded or a 404 Not Found response otherwise.</returns>
         // PUT: api/alarmevents/3/status
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateAlarmStatus(int id, AlarmStatus status)
