@@ -11,6 +11,17 @@ namespace SecureVault.API.Services
         private const double CarbonMonoxideThreshold = 35.0; // ppm - dangerous CO levels
         private const double SmokeThreshold = 90.0; // ppm - smoke detection warning
 
+        /// <summary>
+        /// Determines whether a given sensor reading should trigger an
+        /// alarm, based on the sensor's type and the reading's value.
+        /// Numeric sensors are compared against a fixed threshold, while
+        /// boolean-style sensors (e.g. motion or door) trigger whenever
+        /// the value indicates a positive reading.
+        /// </summary>
+        /// <param name="sensor">The sensor that produced the reading.</param>
+        /// <param name="value">The value reported by the sensor.</param>
+        /// <returns><c>true</c> if the reading should trigger an alarm;
+        /// otherwise, <c>false</c>.</returns>
         public bool ShouldTriggerAlarm(Sensor sensor, double value)
         {
             return sensor.Type switch
@@ -28,6 +39,14 @@ namespace SecureVault.API.Services
             };
         }
 
+        /// <summary>
+        /// Generates a human-readable description of an alarm, based on
+        /// the sensor's type and the value that triggered it.
+        /// </summary>
+        /// <param name="sensor">The sensor that produced the reading.</param>
+        /// <param name="value">The value reported by the sensor.</param>
+        /// <returns>A descriptive message suitable for display to the
+        /// end user.</returns>
         public string GetAlarmDescription(Sensor sensor, double value)
         {
             return sensor.Type switch
