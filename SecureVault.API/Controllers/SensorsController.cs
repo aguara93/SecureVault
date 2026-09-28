@@ -46,11 +46,11 @@ namespace SecureVault.API.Controllers
         }
 
         /// <summary>
-        ///  Retrives a single sensor identified by its unique ID.
+        /// Retrieves a single sensor identified by its unique ID.
         /// </summary>
         /// <param name="id">The unique identifier of the sensor to retrieve.</param>
         /// <returns>A task that represents the asynchronous operation.
-        /// The task result contains the requested SensorSto
+        /// The task result contains the requested SensorDto
         /// if found, or a 404 Not Found response otherwise.</returns>
         // GET: api/sensors/5
         [HttpGet("{id}")]
@@ -72,12 +72,13 @@ namespace SecureVault.API.Controllers
 
         /// <summary>
         /// Creates a new sensor and generates a unique API key for it.
-        /// The raw API key is returned only in thi response and cannot
+        /// The raw API key is returned only in this response and cannot
         /// be retrieved again; only its hashed form is persisted.
         /// </summary>
         /// <param name="sensorDto">The data transfer object containing
-        /// the datails of the sensor to create.</param>
-        /// <returns>A task result contains the newly created sensor together
+        /// the details of the sensor to create.</param>
+        /// <returns>A task that represents the asynchronous operation.
+        /// The task result contains the newly created sensor together
         /// with its generated API key.</returns>
         // POST: api/sensors
         [HttpPost]
@@ -93,7 +94,7 @@ namespace SecureVault.API.Controllers
                 Location = sensorDto.Location,
                 Type = sensorDto.Type,
                 Status = sensorDto.Status,
-                ApiKey = apiKey,   // shown once to the user
+                ApiKey = string.Empty,   // the raw key is never persisted; only the hash is stored
                 ApiKeyHash = apiKeyHash,   // stored securely
                 CreatedAt = DateTime.UtcNow,
                 LastSeen = DateTime.UtcNow
@@ -103,7 +104,7 @@ namespace SecureVault.API.Controllers
             await _context.SaveChangesAsync();
 
             sensorDto.Id = sensor.Id;
-            return CreatedAtAction(nameof(GetSensor), new { id = sensor.Id }, new 
+            return CreatedAtAction(nameof(GetSensor), new { id = sensor.Id }, new
             {
                 sensor = sensorDto,
                 apiKey = apiKey // return the raw key once, so the user can copy it
@@ -116,7 +117,7 @@ namespace SecureVault.API.Controllers
         /// <param name="id">The unique identifier of the sensor to delete.</param>
         /// <returns>A task that represents the asynchronous operation.
         /// The task result contains a 204 No Content response if the
-        /// delation succeeded, or a 404 Not Found response otherwise.</returns>
+        /// deletion succeeded, or a 404 Not Found response otherwise.</returns>
         // DELETE: api/sensors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSensor(int id)
@@ -125,6 +126,7 @@ namespace SecureVault.API.Controllers
             if (sensor == null) return NotFound();
 
             _context.Sensors.Remove(sensor);
+
             await _context.SaveChangesAsync();
 
             return NoContent();
